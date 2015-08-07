@@ -1,4 +1,4 @@
-;;(c) pwrider 2008
+;;grekit (c) 2008
 
 .386
 .model flat, stdcall

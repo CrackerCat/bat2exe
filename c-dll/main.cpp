@@ -49,49 +49,49 @@ BOOL change_icon(LPCSTR szFileName, LPCSTR szIconFileName)
 
 BOOL complie2exe(LPCSTR szFileName, LPCSTR szOutFileName, LPCSTR szSectionName, BOOL HideCmd)
 {
-    LPBYTE pBatData;
+	LPBYTE pBatData;
 	DWORD BatFileSize;
 	DWORD PeFileSize = LdrData_size;
 	DWORD tmp;
-    PIMAGE_DOS_HEADER DOSHeader;
+	PIMAGE_DOS_HEADER DOSHeader;
 	PIMAGE_NT_HEADERS32 NtHeader32;
 	PIMAGE_SECTION_HEADER PESection;
-
+	
 	LPBYTE LoaderData = (LPBYTE)malloc(LdrData_size);
 	memcpy(LoaderData, LdrData, LdrData_size);
-
-    HANDLE hBatFile = CreateFileA(szFileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+	
+	HANDLE hBatFile = CreateFileA(szFileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	if (hBatFile == INVALID_HANDLE_VALUE)
-        return FALSE;
-
-    BatFileSize = GetFileSize(hBatFile, NULL);
-    if (BatFileSize == 0)
-        return FALSE;
-
-    pBatData = (LPBYTE)malloc(BatFileSize);
-    if (!ReadFile(hBatFile, pBatData, BatFileSize, &tmp, 0))
-        return FALSE;
-
-    CloseHandle(hBatFile);
-
-    if (HideCmd)
-        LoaderData[0x6B2] = 0x00;
+		return FALSE;
+	
+	BatFileSize = GetFileSize(hBatFile, NULL);
+	if (BatFileSize == 0)
+		return FALSE;
+	
+	pBatData = (LPBYTE)malloc(BatFileSize);
+	if (!ReadFile(hBatFile, pBatData, BatFileSize, &tmp, 0))
+		return FALSE;
+	
+	CloseHandle(hBatFile);
+	
+	if (HideCmd)
+		LoaderData[0x6B2] = 0x00;
 
 	DOSHeader = (PIMAGE_DOS_HEADER)LoaderData;
 	NtHeader32 = (PIMAGE_NT_HEADERS32)(LoaderData + DOSHeader->e_lfanew);
 	PESection = (PIMAGE_SECTION_HEADER)((LPBYTE)&(NtHeader32->OptionalHeader) + NtHeader32->FileHeader.SizeOfOptionalHeader);
-
+	
 	DWORD i = NtHeader32->FileHeader.NumberOfSections;
-
+	
 	DWORD NewVA = PESection[NtHeader32->FileHeader.NumberOfSections - 1].VirtualAddress + PESection[NtHeader32->FileHeader.NumberOfSections - 1].Misc.VirtualSize;
 	NewVA = AlignSize(NewVA, NtHeader32->OptionalHeader.SectionAlignment);
 	NewVA += NtHeader32->OptionalHeader.ImageBase;
-
+	
 	DWORD NewOffset = PESection[NtHeader32->FileHeader.NumberOfSections - 1].PointerToRawData + PESection[NtHeader32->FileHeader.NumberOfSections - 1].SizeOfRawData;
 	NewOffset = AlignSize(NewOffset, NtHeader32->OptionalHeader.FileAlignment);
-
+	
 	DWORD NewSize = AlignSize(BatFileSize, NtHeader32->OptionalHeader.SectionAlignment);
-
+	
 	CopyMemory(&PESection[i].Name, szSectionName, 8);
 	PESection[i].Misc.VirtualSize = BatFileSize;
 	PESection[i].VirtualAddress = NewVA - NtHeader32->OptionalHeader.ImageBase;
@@ -101,21 +101,21 @@ BOOL complie2exe(LPCSTR szFileName, LPCSTR szOutFileName, LPCSTR szSectionName, 
 	NtHeader32->FileHeader.NumberOfSections++;
 	NtHeader32->OptionalHeader.SizeOfImage += NewSize;
 	PeFileSize += NtHeader32->OptionalHeader.FileAlignment;
-
+	
 	HANDLE hFile = CreateFileA(szOutFileName, GENERIC_READ + GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
-        return FALSE;
+	return FALSE;
 
-    SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-    if (!WriteFile(hFile, LoaderData, PeFileSize, &tmp, 0))
-        return FALSE;
-
-    SetFilePointer(hFile, NewOffset, NULL, FILE_BEGIN);
-    if (!WriteFile(hFile, pBatData, BatFileSize, &tmp, 0))
-        return FALSE;
-
-    CloseHandle(hFile);
-    return TRUE;
+	SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+	if (!WriteFile(hFile, LoaderData, PeFileSize, &tmp, 0))
+		return FALSE;
+	
+	SetFilePointer(hFile, NewOffset, NULL, FILE_BEGIN);
+	if (!WriteFile(hFile, pBatData, BatFileSize, &tmp, 0))
+		return FALSE;
+	
+	CloseHandle(hFile);
+	return TRUE;
 }
 
 extern "C" DLL_EXPORT BOOL APIENTRY DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)

@@ -2,49 +2,49 @@
 
 BOOL change_icon(LPCSTR szFileName, LPCSTR szIconFileName)
 {
-    HANDLE hWhere = BeginUpdateResource(szFileName, FALSE);
-    if (hWhere == NULL)
-        return FALSE;
-
-    char *buffer;
-    long buffersize;
-    int hFile;
-
-    hFile = open(szIconFileName, O_RDONLY | O_BINARY);
-    if (hFile == -1)
-      return FALSE;
-
-    buffersize = filelength(hFile);
-    buffer = (char *)malloc(buffersize);
-    read(hFile, buffer, buffersize);
-    close(hFile);
-
-    if (!UpdateResource(hWhere, RT_ICON,MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (buffer + 22), buffersize - 22))
-        return FALSE;
-
-    GROUPICON grData;
-
-    grData.Reserved1 = 0;
-    grData.ResourceType = 1;
-    grData.ImageCount = 1;
-    grData.Width = 32;
-    grData.Height = 32;
-    grData.Colors = 0;
-    grData.Reserved2 = 0;
-    grData.Planes = 2;
-    grData.BitsPerPixel = 32;
-    grData.ImageSize = buffersize - 22;
-    grData.ResourceID = 1;
-
-    if (!UpdateResource(hWhere, RT_GROUP_ICON, "MAINICON", MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), &grData, sizeof(GROUPICON)))
-        return FALSE;
-
-    delete buffer;
-
-    if (!EndUpdateResource(hWhere, FALSE))
-        return FALSE;
-
-    return TRUE;
+	HANDLE hWhere = BeginUpdateResource(szFileName, FALSE);
+	if (hWhere == NULL)
+		return FALSE;
+	
+	char *buffer;
+	long buffersize;
+	int hFile;
+	
+	hFile = open(szIconFileName, O_RDONLY | O_BINARY);
+	if (hFile == -1)
+		return FALSE;
+	
+	buffersize = filelength(hFile);
+	buffer = (char*)malloc(buffersize);
+	read(hFile, buffer, buffersize);
+	close(hFile);
+	
+	if (!UpdateResource(hWhere, RT_ICON,MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (buffer + 22), buffersize - 22))
+		return FALSE;
+	
+	GROUPICON grData;
+	
+	grData.Reserved1 = 0;
+	grData.ResourceType = 1;
+	grData.ImageCount = 1;
+	grData.Width = 32;
+	grData.Height = 32;
+	grData.Colors = 0;
+	grData.Reserved2 = 0;
+	grData.Planes = 2;
+	grData.BitsPerPixel = 32;
+	grData.ImageSize = buffersize - 22;
+	grData.ResourceID = 1;
+	
+	if (!UpdateResource(hWhere, RT_GROUP_ICON, "MAINICON", MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), &grData, sizeof(GROUPICON)))
+		return FALSE;
+	
+	delete[] buffer;
+	
+	if (!EndUpdateResource(hWhere, FALSE))
+		return FALSE;
+	
+	return TRUE;
 }
 
 BOOL complie2exe(LPCSTR szFileName, LPCSTR szOutFileName, LPCSTR szSectionName, BOOL HideCmd)

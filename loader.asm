@@ -1,4 +1,4 @@
-;;grekit (c) 2008
+;;cheax (c) 2008
 
 .386
 .model flat, stdcall

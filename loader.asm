@@ -1,4 +1,4 @@
-;;cheax (c) 2008
+;;foqus-dx (c) 2008
 
 .386
 .model flat, stdcall

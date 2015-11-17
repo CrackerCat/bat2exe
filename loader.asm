@@ -1,5 +1,3 @@
-;;foqus-dx (c) 2008
-
 .386
 .model flat, stdcall
 option casemap: none

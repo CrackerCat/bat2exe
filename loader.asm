@@ -1,3 +1,6 @@
+;; (c) 2008
+;; by Syzor
+
 .386
 .model flat, stdcall
 option casemap: none

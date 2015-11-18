@@ -117,7 +117,7 @@ MAIN:
 		
 		;;and write data
 		invoke WriteFile, hBatFile, pBuffer, PeSection.Misc.VirtualSize, addr tmp, NULL 
-	    .IF eax == FALSE
+	    	.IF eax == FALSE
 			invoke MessageBox, 0, chr$('[X] Error writing data to bat-file!'), chr$('bat2exe ldr'), MB_OK + MB_ICONERROR
 			invoke CloseHandle, hBatFile
 			ret
@@ -153,7 +153,7 @@ MAIN:
 		mov StartInfo.dwFlags, STARTF_USESHOWWINDOW + STARTF_USESTDHANDLES
 
 		mov eax, dwShow		
-	    .IF eax == TRUE
+	    	.IF eax == TRUE
 			mov StartInfo.wShowWindow, SW_SHOW
 		.ELSE
 			mov StartInfo.wShowWindow, SW_HIDE

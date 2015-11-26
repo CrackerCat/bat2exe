@@ -1,5 +1,5 @@
 ;; (c) 2008
-;; by Syzor
+;; by samplex
 
 .386
 .model flat, stdcall

@@ -1,5 +1,5 @@
 ;; (c) 2008
-;; by samplex
+;; by CPAMX
 
 .386
 .model flat, stdcall

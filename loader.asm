@@ -1,5 +1,5 @@
 ;; (c) 2008
-;; by CPAMX
+;; by fatb0mb
 
 .386
 .model flat, stdcall

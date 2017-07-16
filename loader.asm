@@ -1,5 +1,4 @@
 ;; (c) 2008
-;; by fatb0mb
 
 .386
 .model flat, stdcall
